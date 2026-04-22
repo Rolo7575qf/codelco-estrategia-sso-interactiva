@@ -453,16 +453,16 @@
           <div className="decision-tree">
             <div className="decision-node">
               <p className="decision-question">{node.question}</p>
-              {node.result ? (
+                      {node.result && (
                 <div className="decision-result">
                   <h3 className="result-title">{node.result.title}</h3>
                   <p className="result-text">{node.result.message}</p>
                 </div>
-              ) : (
+              
                 <div className="decision-options">
                   {node.options.map((opt, i) => (
                     <button key={i} className="decision-btn" onClick={() => handleOptionClick(opt)}>{opt.text}</button>
-                  ))}
+                        )}
                 </div>
               )}
             </div>
