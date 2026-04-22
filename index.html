@@ -1,648 +1,232 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Estrategia SSO Codelco | Presentacion Interactiva</title>
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #0a1628 0%, #1a2744 50%, #0a1628 100%);
-      min-height: 100vh;
-      color: #fff;
-      overflow-x: hidden;
-    }
-    .screen { min-height: 100vh; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
-    .screen.hidden { display: none; }
-    .logo-container { margin-bottom: 30px; }
-    .logo-text {
-      font-size: 42px;
-      font-weight: 900;
-      background: linear-gradient(90deg, #FF6B00, #E65100);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .tagline { color: #c0c0c0; font-size: 14px; letter-spacing: 3px; text-transform: uppercase; }
-    .hero-title {
-      font-size: 36px;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 16px;
-      line-height: 1.3;
-    }
-    .hero-subtitle {
-      font-size: 16px;
-      color: #c0c0c0;
-      text-align: center;
-      max-width: 600px;
-      margin-bottom: 40px;
-      line-height: 1.6;
-    }
-    .btn {
-      padding: 16px 40px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .btn-primary {
-      background: linear-gradient(90deg, #FF6B00, #E65100);
-      color: white;
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(255,107,0,0.3);
-    }
-    .btn-secondary {
-      background: rgba(255,255,255,0.05);
-      color: white;
-      border: 2px solid rgba(255,107,0,0.3);
-    }
-    .btn-secondary:hover {
-      background: rgba(255,107,0,0.1);
-      border-color: #FF6B00;
-    }
-    .card {
-      background: rgba(255,255,255,0.05);
-      border-radius: 16px;
-      padding: 24px;
-      margin: 16px 0;
-      border: 1px solid rgba(255,255,255,0.1);
-      width: 100%;
-      max-width: 800px;
-    }
-    .card-title { color: #FF6B00; font-size: 20px; font-weight: 700; margin-bottom: 12px; }
-    .card-text { color: #c0c0c0; font-size: 15px; line-height: 1.6; }
-    .video-container {
-      width: 100%;
-      max-width: 720px;
-      aspect-ratio: 16/9;
-      border-radius: 12px;
-      overflow: hidden;
-      margin: 20px 0;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    }
-    .video-container iframe { width: 100%; height: 100%; border: none; }
-    .pillars-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      max-width: 900px;
-      width: 100%;
-    }
-    .pillar-card {
-      background: rgba(255,107,0,0.08);
-      border-radius: 16px;
-      padding: 28px 24px;
-      text-align: center;
-      border: 1px solid rgba(255,107,0,0.2);
-      transition: transform 0.3s, border-color 0.3s;
-      cursor: pointer;
-    }
-    .pillar-card:hover { transform: translateY(-5px); border-color: #FF6B00; }
-    .pillar-icon { font-size: 42px; margin-bottom: 16px; }
-    .pillar-title { color: #FF6B00; font-size: 18px; font-weight: 700; margin-bottom: 12px; }
-    .pillar-text { color: #c0c0c0; font-size: 14px; line-height: 1.5; }
-    .quiz-options { display: flex; flex-direction: column; gap: 12px; max-width: 500px; margin: 20px 0; }
-    .quiz-option {
-      padding: 16px 24px;
-      background: rgba(255,255,255,0.08);
-      border: 2px solid rgba(255,107,0,0.3);
-      border-radius: 12px;
-      color: white;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: left;
-      font-size: 15px;
-    }
-    .quiz-option:hover { background: rgba(255,107,0,0.15); border-color: #FF6B00; }
-    .quiz-option.correct { background: rgba(46,185,67,0.3); border-color: #2EB943; color: #2EB943; }
-    .quiz-option.incorrect { background: rgba(230,57,70,0.3); border-color: #E63946; color: #E63946; }
-    .feedback {
-      margin-top: 16px;
-      padding: 16px;
-      border-radius: 12px;
-      font-size: 15px;
-      width: 100%;
-      max-width: 500px;
-    }
-    .feedback.correct {
-      background: rgba(46,185,67,0.2);
-      border: 1px solid #2EB943;
-      color: #2EB943;
-    }
-    .feedback.incorrect {
-      background: rgba(230,57,70,0.2);
-      border: 1px solid #E63946;
-      color: #E63946;
-    }
-    .decision-tree { max-width: 900px; margin: 20px 0; }
-    .decision-node {
-      background: rgba(255,107,0,0.1);
-      border: 2px solid #FF6B00;
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 20px;
-    }
-    .decision-question {
-      color: #FF6B00;
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-    .decision-options { display: flex; flex-direction: column; gap: 12px; }
-    .decision-btn {
-      padding: 14px 24px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,107,0,0.4);
-      border-radius: 12px;
-      color: white;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.2s;
-      text-align: left;
-    }
-    .decision-btn:hover {
-      background: rgba(255,107,0,0.15);
-      border-color: #FF6B00;
-    }
-    .decision-result {
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 16px;
-      border-left: 4px solid #FF6B00;
-    }
-    .result-title { color: #FF6B00; font-size: 18px; font-weight: 700; margin-bottom: 12px; }
-    .result-text { color: #c0c0c0; font-size: 14px; line-height: 1.6; }
-    .score-display { font-size: 72px; font-weight: 900; color: #FF6B00; margin: 20px 0; }
-    .score-message { font-size: 20px; color: #b0c4de; margin-bottom: 30px; }
-    .info-box {
-      background: rgba(255,107,0,0.05);
-      border-radius: 12px;
-      padding: 20px;
-      margin: 20px 0;
-      border: 1px solid rgba(255,107,0,0.2);
-      width: 100%;
-      max-width: 800px;
-    }
-    .info-box h4 { color: #FF6B00; margin-bottom: 10px; }
-    .info-box p { color: #c0c0c0; font-size: 14px; line-height: 1.5; }
-    .progress-bar {
-      width: 100%;
-      max-width: 400px;
-      height: 8px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 4px;
-      overflow: hidden;
-      margin: 20px 0;
-    }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #FF6B00, #E65100);
-      transition: width 0.3s ease;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estrategia SSO Codelco | Presentacion Interactiva</title>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Roboto',sans-serif;background:linear-gradient(135deg,#0a1628 0%,#1a2744 50%,#0a1628 100%);min-height:100vh;color:#fff;overflow-x:hidden}
+.screen{min-height:100vh;padding:40px 20px;display:flex;flex-direction:column;align-items:center}
+.logo-container{margin-bottom:30px}
+.logo-text{font-size:42px;font-weight:900;background:linear-gradient(90deg,#FF6B00,#E65100);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tagline{color:#c0c0c0;font-size:14px;letter-spacing:3px;text-transform:uppercase}
+.hero-title{font-size:36px;font-weight:700;text-align:center;margin-bottom:16px;line-height:1.3}
+.hero-subtitle{font-size:16px;color:#c0c0c0;text-align:center;max-width:600px;margin-bottom:40px;line-height:1.6}
+.btn{padding:16px 40px;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.3s}
+.btn-primary{background:linear-gradient(90deg,#FF6B00,#E65100);color:white}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(255,107,0,0.3)}
+.btn-secondary{background:rgba(255,255,255,0.05);color:white;border:2px solid rgba(255,107,0,0.3)}
+.btn-secondary:hover{background:rgba(255,107,0,0.1);border-color:#FF6B00}
+.card{background:rgba(255,255,255,0.05);border-radius:16px;padding:24px;margin:16px 0;border:1px solid rgba(255,255,255,0.1);width:100%;max-width:800px}
+.card-title{color:#FF6B00;font-size:20px;font-weight:700;margin-bottom:12px}
+.card-text{color:#c0c0c0;font-size:15px;line-height:1.6}
+.video-container{width:100%;max-width:720px;aspect-ratio:16/9;border-radius:12px;overflow:hidden;margin:20px 0;box-shadow:0 10px 40px rgba(0,0,0,0.5)}
+.video-container iframe{width:100%;height:100%;border:none}
+.pillars-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:900px;width:100%}
+.pillar-card{background:rgba(255,107,0,0.08);border-radius:16px;padding:28px 24px;text-align:center;border:1px solid rgba(255,107,0,0.2);transition:transform 0.3s,border-color 0.3s;cursor:pointer}
+.pillar-card:hover{transform:translateY(-5px);border-color:#FF6B00}
+.pillar-icon{font-size:42px;margin-bottom:16px}
+.pillar-title{color:#FF6B00;font-size:18px;font-weight:700;margin-bottom:12px}
+.pillar-text{color:#c0c0c0;font-size:14px;line-height:1.5}
+.quiz-options{display:flex;flex-direction:column;gap:12px;max-width:500px;margin:20px 0}
+.quiz-option{padding:16px 24px;background:rgba(255,255,255,0.08);border:2px solid rgba(255,107,0,0.3);border-radius:12px;color:white;cursor:pointer;transition:all 0.2s;text-align:left;font-size:15px}
+.quiz-option:hover{background:rgba(255,107,0,0.15);border-color:#FF6B00}
+.quiz-option.correct{background:rgba(46,185,67,0.3);border-color:#2EB943;color:#2EB943}
+.quiz-option.incorrect{background:rgba(230,57,70,0.3);border-color:#E63946;color:#E63946}
+.feedback{margin-top:16px;padding:16px;border-radius:12px;font-size:15px;width:100%;max-width:500px}
+.feedback.correct{background:rgba(46,185,67,0.2);border:1px solid #2EB943;color:#2EB943}
+.feedback.incorrect{background:rgba(230,57,70,0.2);border:1px solid #E63946;color:#E63946}
+.decision-tree{max-width:900px;margin:20px 0}
+.decision-node{background:rgba(255,107,0,0.1);border:2px solid #FF6B00;border-radius:16px;padding:24px;margin-bottom:20px}
+.decision-question{color:#FF6B00;font-size:18px;font-weight:700;margin-bottom:16px}
+.decision-options{display:flex;flex-direction:column;gap:12px}
+.decision-btn{padding:14px 24px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,107,0,0.4);border-radius:12px;color:white;cursor:pointer;font-size:14px;transition:all 0.2s;text-align:left}
+.decision-btn:hover{background:rgba(255,107,0,0.15);border-color:#FF6B00}
+.score-display{font-size:72px;font-weight:900;color:#FF6B00;margin:20px 0}
+.score-message{font-size:20px;color:#b0c4de;margin-bottom:30px}
+.info-box{background:rgba(255,107,0,0.05);border-radius:12px;padding:20px;margin:20px 0;border:1px solid rgba(255,107,0,0.2);width:100%;max-width:800px}
+.info-box h4{color:#FF6B00;margin-bottom:10px}
+.info-box p{color:#c0c0c0;font-size:14px;line-height:1.5}
+.progress-bar{width:100%;max-width:400px;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;margin:20px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,#FF6B00,#E65100);transition:width 0.3s ease}
+</style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="text/babel">
-
-    const { useState, useEffect } = React;
-
-    // --- Welcome Screen ---
-    function WelcomeScreen({ onStart }) {
-      return (
-        <div className="screen">
-          <div className="logo-container">
-            <div className="logo-text">CODELCO</div>
-            <div className="tagline">Estrategia SSO 2024-2030</div>
-          </div>
-          <h1 className="hero-title">Nueva Estrategia de Seguridad y Salud Ocupacional</h1>
-          <p className="hero-subtitle">
-            Descubre los pilares, desafios y herramientas que transformaran nuestra cultura de seguridad hacia el Objetivo Cero.
-          </p>
-          <button className="btn btn-primary" onClick={onStart}>Comenzar Presentacion</button>
-        </div>
-      );
-    }
-
-    // --- Video Screen ---
-    function VideoScreen({ onContinue }) {
-      return (
-        <div className="screen">
-          <div className="logo-container">
-            <div className="logo-text">CODELCO</div>
-            <div className="tagline">Estrategia SSO 2024-2030</div>
-          </div>
-          <h2 className="hero-title">Video Introductorio</h2>
-          <div className="video-container">
-            <iframe
-              src="https://www.youtube.com/embed/6hrg2Ys3nmE?rel=0"
-              title="Estrategia SSO Codelco"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          </div>
-          <div className="card">
-            <h3 className="card-title">Reflexiona mientras ves</h3>
-            <p className="card-text">
-              Observa como Codelco esta transformando su enfoque de seguridad. Presta atencion a los 4 pilares estrategicos que se mencionan.
-            </p>
-          </div>
-          <button className="btn btn-primary" onClick={onContinue} style={{marginTop: '20px'}}>
-            Continuar a los Pilares
-          </button>
-        </div>
-      );
-    }
-
-    // --- Pillars Screen ---
-    function PillarsScreen({ onContinue }) {
-      const pillars = [
-        {
-          icon: "🛡️",
-          title: "Cultura de Seguridad",
-          text: "Fortalecer el compromiso de todos con la seguridad, promoviendo comportamientos seguros y liderando con el ejemplo."
-        },
-        {
-          icon: "🔍",
-          title: "Gestion de Riesgos",
-          text: "Identificar, evaluar y controlar proactivamente los riesgos criticos para prevenir incidentes graves."
-        },
-        {
-          icon: "⚙️",
-          title: "Excelencia Operacional",
-          text: "Integrar la seguridad en cada proceso operativo, asegurando que cada tarea se realice de manera segura."
-        },
-        {
-          icon: "🤝",
-          title: "Bienestar Integral",
-          text: "Cuidar la salud fisica y mental de cada trabajador, reconociendo que el bienestar es fundamental para la seguridad."
-        }
-      ];
-
-      return (
-        <div className="screen">
-          <div className="logo-container">
-            <div className="logo-text">CODELCO</div>
-            <div className="tagline">4 Pilares Estrategicos</div>
-          </div>
-          <h2 className="hero-title">Los 4 Pilares de la Estrategia SSO</h2>
-          <div className="pillars-grid">
-            {pillars.map((pillar, idx) => (
-              <div key={idx} className="pillar-card">
-                <div className="pillar-icon">{pillar.icon}</div>
-                <h3 className="pillar-title">{pillar.title}</h3>
-                <p className="pillar-text">{pillar.text}</p>
-              </div>
-            ))}
-          </div>
-          <div className="card">
-            <h3 className="card-title">Objetivo Cero</h3>
-            <p className="card-text">
-              La meta es ambiciosa: Cero incidentes con consecuencias graves. Cada uno de nosotros es responsable de hacer esto realidad.
-            </p>
-          </div>
-          <button className="btn btn-primary" onClick={onContinue} style={{marginTop: '20px'}}>
-            Comenzar Evaluacion Interactiva
-          </button>
-        </div>
-      );
-    }
-
-    // --- Quiz Screen ---
-    function QuizScreen({ onComplete, onSkip }) {
-      const [currentQuestion, setCurrentQuestion] = useState(0);
-      const [score, setScore] = useState(0);
-      const [selected, setSelected] = useState(null);
-      const [showFeedback, setShowFeedback] = useState(false);
-
-      const questions = [
-        {
-          question: "¿Cuál es el objetivo principal de la nueva estrategia SSO de Codelco?",
-          options: [
-            "Reducir costos operativos",
-            "Alcanzar Cero incidentes con consecuencias graves",
-            "Aumentar la producción minera",
-            "Implementar nuevas tecnologías"
-          ],
-          correct: 1,
-          feedback: {
-            correct: "¡Correcto! El Objetivo Cero es la meta central: cero incidentes con consecuencias graves.",
-            incorrect: "Incorrecto. El objetivo es alcanzar Cero incidentes con consecuencias graves."
-          }
-        },
-        {
-          question: "¿Cuál NO es uno de los 4 pilares de la estrategia?",
-          options: [
-            "Cultura de Seguridad",
-            "Gestion de Riesgos",
-            "Automatización Total",
-            "Bienestar Integral"
-          ],
-          correct: 2,
-          feedback: {
-            correct: "¡Muy bien! La automatización total no es uno de los pilares. Los 4 son: Cultura de Seguridad, Gestion de Riesgos, Excelencia Operacional y Bienestar Integral.",
-            incorrect: "Incorrecto. Los 4 pilares son Cultura de Seguridad, Gestion de Riesgos, Excelencia Operacional y Bienestar Integral."
-          }
-        },
-        {
-          question: "¿Qué significa que la seguridad debe integrarse en cada proceso operativo?",
-          options: [
-            "Que solo los supervisores deben preocuparse de seguridad",
-            "Que la seguridad es parte de cada tarea que realizamos, no algo separado",
-            "Que debemos hacer mas reuniones de seguridad",
-            "Que debemos comprar mas equipos de protección"
-          ],
-          correct: 1,
-          feedback: {
-            correct: "¡Exacto! La seguridad debe estar integrada en cada tarea, es parte de como trabajamos, no algo separado.",
-            incorrect: "Incorrecto. La integracion significa que la seguridad es parte de cada tarea, no algo separado del trabajo."
-          }
-        }
-      ];
-
-      const handleAnswer = (index) => {
-        if (selected !== null) return;
-        setSelected(index);
-        setShowFeedback(true);
-        if (index === questions[currentQuestion].correct) {
-          setScore(score + 1);
-        }
-      };
-
-      const nextQuestion = () => {
-        if (currentQuestion < questions.length - 1) {
-          setCurrentQuestion(currentQuestion + 1);
-          setSelected(null);
-          setShowFeedback(false);
-        } else {
-          onComplete(score + 1, questions.length);
-        }
-      };
-
-      const q = questions[currentQuestion];
-      const progress = ((currentQuestion + 1) / questions.length) * 100;
-
-      return (
-        <div className="screen">
-          <div className="logo-container">
-            <div className="logo-text">CODELCO</div>
-            <div className="tagline">Evaluacion de Conocimientos</div>
-          </div>
-          <h2 className="hero-title">Pregunta {currentQuestion + 1} de {questions.length}</h2>
-          <div className="progress-bar">
-            <div className="progress-fill" style={{width: progress + '%'}}></div>
-          </div>
-          <div className="card">
-            <h3 className="card-title">{q.question}</h3>
-            <div className="quiz-options">
-              {q.options.map((option, idx) => (
-                <button
-                  key={idx}
-                  className={'quiz-option ' + (selected === idx ? (idx === q.correct ? 'correct' : 'incorrect') : '')}
-                  onClick={() => handleAnswer(idx)}
-                  disabled={selected !== null}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-            {showFeedback && (
-              <div className={'feedback ' + (selected === q.correct ? 'correct' : 'incorrect')}>
-                {selected === q.correct ? q.feedback.correct : q.feedback.incorrect}
-              </div>
-            )}
-            {showFeedback && (
-              <button className="btn btn-primary" onClick={nextQuestion} style={{marginTop: '16px'}}>
-                {currentQuestion < questions.length - 1 ? 'Siguiente Pregunta' : 'Ver Resultados'}
-              </button>
-            )}
-          </div>
-          <button className="btn btn-secondary" onClick={onSkip} style={{marginTop: '20px'}}>
-            Saltar Evaluacion
-          </button>
-        </div>
-      );
-    }
-
-    // --- Decision Tree Screen ---
-    function DecisionTreeScreen({ onComplete }) {
-      const [step, setStep] = useState(0);
-      const [results, setResults] = useState([]);
-
-      const decisions = [
-        {
-          question: "Un trabajador observa que un compañero no esta usando su equipo de proteccion personal (EPP) en una zona de alto riesgo. ¿Qué debe hacer?",
-          options: [
-            "Ignorarlo, no es mi responsabilidad",
-            "Acercarse y conversar respetuosamente sobre la importancia del EPP",
-            "Reportarlo inmediatamente al supervisor sin hablar con el compañero",
-            "Tomar una foto y compartirla en redes sociales"
-          ],
-          correct: 1,
-          result: {
-            good: {
-              title: "Decision Correcta",
-              text: "Conversar con el compañero demuestra cultura de seguridad y cuidado mutuo. El EPP es la ultima barrera de protección y todos somos responsables de velar por el cumplimiento."
-            },
-            bad: {
-              title: "Decision que puede mejorar",
-              text: "Ignorar la situación pone en riesgo al compañero y a todos. En Codelco, todos somos responsables de la seguridad. La mejor opción es conversar respetuosamente y reportar si es necesario."
-            }
-          }
-        },
-        {
-          question: "Estas realizando una tarea rutinaria que has hecho cientos de veces sin problemas. ¿Qué enfoque de seguridad debes mantener?",
-          options: [
-            "Hacerla rapido ya que la conozco bien",
-            "Mantener la misma rutina de seguridad que el primer dia",
-            "Saltar algunos pasos del procedimiento para ser mas eficiente",
-            "Delegarla a un compañero menos experimentado"
-          ],
-          correct: 1,
-          result: {
-            good: {
-              title: "Excelente Mentalidad",
-              text: "La familiaridad no debe generar confianza excesiva. Mantener los procedimientos de seguridad en cada tarea, sin importar cuan rutinaria sea, es clave para prevenir incidentes."
-            },
-            bad: {
-              title: "Atencion: Riesgo de Confianza Excesiva",
-              text: "La rutina puede generar confianza excesiva y llevar a omitir pasos de seguridad. Muchos incidentes ocurren en tareas conocidas. Siempre sigue el procedimiento completo."
-            }
-          }
-        },
-        {
-          question: "Identificas un riesgo critico en tu area de trabajo que podria causar un incidente grave. ¿Cuál es tu accion?",
-          options: [
-            "Continuar trabajando con mas cuidado",
-            "Detener la actividad, informar inmediatamente y participar en la solucion",
-            "Esperar a la proxima reunion de seguridad para mencionarlo",
-            "Asumir que alguien mas ya lo reporto"
-          ],
-          correct: 1,
-          result: {
-            good: {
-              title: "Actuacion Ejemplar",
-              text: "Detener la actividad ante un riesgo critico es la decision correcta. En Codelco, todos tenemos el poder y la responsabilidad de detener trabajos inseguros. Reportar y participar en la solucion es clave."
-            },
-            bad: {
-              title: "Necesitas actuar con mayor proactividad",
-              text: "Ante un riesgo critico, la accion debe ser inmediata. Detener la actividad y reportar es fundamental. Esperar o asumir que otros actuaran puede tener consecuencias graves."
-            }
-          }
-        }
-      ];
-
-      const handleDecision = (isCorrect) => {
-        setResults([...results, isCorrect]);
-        if (step < decisions.length - 1) {
-          setStep(step + 1);
-        } else {
-          onComplete(results.filter(r => r).length + (isCorrect ? 1 : 0), decisions.length);
-        }
-      };
-
-      const d = decisions[step];
-      const progress = ((step + 1) / decisions.length) * 100;
-
-      return (
-        <div className="screen">
-          <div className="logo-container">
-            <div className="logo-text">CODELCO</div>
-            <div className="tagline">Arbol de Decisiones</div>
-          </div>
-          <h2 className="hero-title">Toma de Decisiones en Seguridad</h2>
-          <div className="progress-bar">
-            <div className="progress-fill" style={{width: progress + '%'}}></div>
-          </div>
-          <div className="decision-tree">
-            <div className="decision-node">
-              <div className="decision-question">{d.question}</div>
-              <div className="decision-options">
-                {d.options.map((option, idx) => (
-                  <button
-                    key={idx}
-                    className="decision-btn"
-                    onClick={() => handleDecision(idx === d.correct)}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // --- Results Screen ---
-    function ResultsScreen({ score, total, onRestart }) {
-      const percentage = Math.round((score / total) * 100);
-      let message, color;
-      if (percentage >= 80) {
-        message = "¡Excelente! Demuestras un gran dominio de la estrategia SSO.";
-        color = "#2EB943";
-      } else if (percentage >= 50) {
-        message = "Buen trabajo. Te recomendamos repasar los conceptos clave.";
-        color = "#FF6B00";
-      } else {
-        message = "Sigue aprendiendo. Te invitamos a volver a ver el material.";
-        color = "#E63946";
-      }
-
-      return (
-        <div className="screen">
-          <div className="logo-container">
-            <div className="logo-text">CODELCO</div>
-            <div className="tagline">Resultados</div>
-          </div>
-          <h2 className="hero-title">Tu Puntaje</h2>
-          <div className="score-display" style={{color: color}}>{score}/{total}</div>
-          <p className="score-message">{message}</p>
-          <div className="info-box">
-            <h4>Recuerda</h4>
-            <p>
-              La seguridad es responsabilidad de todos. Cada decision que tomamos impacta no solo en nosotros, sino en nuestros compañeros y familias.
-              El Objetivo Cero es alcanzable cuando trabajamos unidos.
-            </p>
-          </div>
-          <div className="info-box">
-            <h4>Proximos Pasos</h4>
-            <p>
-              1. Participa en las capacitaciones SSO de tu division.<br/>
-              2. Identifica y reporta condiciones inseguras.<br/>
-              3. Lidera con el ejemplo en seguridad todos los dias.<br/>
-              4. Visita el portal SSO de Codelco para mas recursos.
-            </p>
-          </div>
-          <button className="btn btn-primary" onClick={onRestart} style={{marginTop: '20px'}}>
-            Volver a Comenzar
-          </button>
-        </div>
-      );
-    }
-
-    // --- Main App ---
-    function App() {
-      const [screen, setScreen] = useState('welcome');
-      const [quizScore, setQuizScore] = useState({score: 0, total: 0});
-      const [treeScore, setTreeScore] = useState({score: 0, total: 0});
-
-      const handleQuizComplete = (score, total) => {
-        setQuizScore({score, total});
-        setScreen('decisiontree');
-      };
-
-      const handleTreeComplete = (score, total) => {
-        setTreeScore({score, total});
-        setScreen('results');
-      };
-
-      const handleRestart = () => {
-        setScreen('welcome');
-        setQuizScore({score: 0, total: 0});
-        setTreeScore({score: 0, total: 0});
-      };
-
-      const totalScore = quizScore.score + treeScore.score;
-      const totalQuestions = quizScore.total + treeScore.total;
-
-      return (
-        <div>
-          {screen === 'welcome' && <WelcomeScreen onStart={() => setScreen('video')} />}
-          {screen === 'video' && <VideoScreen onContinue={() => setScreen('pillars')} />}
-          {screen === 'pillars' && <PillarsScreen onContinue={() => setScreen('quiz')} />}
-          {screen === 'quiz' && (
-            <QuizScreen
-              onComplete={handleQuizComplete}
-              onSkip={() => setScreen('decisiontree')}
-            />
-          )}
-          {screen === 'decisiontree' && <DecisionTreeScreen onComplete={handleTreeComplete} />}
-          {screen === 'results' && (
-            <ResultsScreen
-              score={totalScore}
-              total={totalQuestions}
-              onRestart={handleRestart}
-            />
-          )}
-        </div>
-      );
-    }
-
-    // Render the app
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
+<div id="root"></div>
+<script type="text/babel">
+const{useState}=React;
+function WelcomeScreen({onStart}){
+return(
+<div className="screen">
+<div className="logo-container">
+<div className="logo-text">CODELCO</div>
+<div className="tagline">Estrategia SSO 2024-2030</div>
+</div>
+<h1 className="hero-title">Nueva Estrategia de Seguridad y Salud Ocupacional</h1>
+<p className="hero-subtitle">Descubre los pilares, desafios y herramientas que transformaran nuestra cultura de seguridad hacia el Objetivo Cero.</p>
+<button className="btn btn-primary" onClick={onStart}>Comenzar Presentacion</button>
+</div>
+);
+}
+function VideoScreen({onContinue}){
+return(
+<div className="screen">
+<div className="logo-container">
+<div className="logo-text">CODELCO</div>
+<div className="tagline">Estrategia SSO 2024-2030</div>
+</div>
+<h2 className="hero-title">Video Introductorio</h2>
+<div className="video-container">
+<iframe src="https://www.youtube.com/embed/6hrg2Ys3nmE?rel=0" title="Estrategia SSO Codelco" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowFullScreen></iframe>
+</div>
+<div className="card">
+<h3 className="card-title">Reflexiona mientras ves</h3>
+<p className="card-text">Observa como Codelco esta transformando su enfoque de seguridad. Presta atencion a los 4 pilares estrategicos que se mencionan.</p>
+</div>
+<button className="btn btn-primary" onClick={onContinue} style={{marginTop:'20px'}}>Continuar a los Pilares</button>
+</div>
+);
+}
+function PillarsScreen({onContinue}){
+const pillars=[{icon:'\u{1F6E1}\u{FE0F}',title:'Cultura de Seguridad',text:'Fortalecer el compromiso de todos con la seguridad, promoviendo comportamientos seguros y liderando con el ejemplo.'},{icon:'\u{1F50D}',title:'Gestion de Riesgos',text:'Identificar, evaluar y controlar proactivamente los riesgos criticos para prevenir incidentes graves.'},{icon:'\u2699\u{FE0F}',title:'Excelencia Operacional',text:'Integrar la seguridad en cada proceso operativo, asegurando que cada tarea se realice de manera segura.'},{icon:'\u{1F91D}',title:'Bienestar Integral',text:'Cuidar la salud fisica y mental de cada trabajador, reconociendo que el bienestar es fundamental para la seguridad.'}];
+return(
+<div className="screen">
+<div className="logo-container">
+<div className="logo-text">CODELCO</div>
+<div className="tagline">4 Pilares Estrategicos</div>
+</div>
+<h2 className="hero-title">Los 4 Pilares de la Estrategia SSO</h2>
+<div className="pillars-grid">
+{pillars.map((p,i)=>(
+<div key={i} className="pillar-card">
+<div className="pillar-icon">{p.icon}</div>
+<h3 className="pillar-title">{p.title}</h3>
+<p className="pillar-text">{p.text}</p>
+</div>
+))}
+</div>
+<div className="card">
+<h3 className="card-title">Objetivo Cero</h3>
+<p className="card-text">La meta es ambiciosa: Cero incidentes con consecuencias graves. Cada uno de nosotros es responsable de hacer esto realidad.</p>
+</div>
+<button className="btn btn-primary" onClick={onContinue} style={{marginTop:'20px'}}>Comenzar Evaluacion Interactiva</button>
+</div>
+);
+}
+function QuizScreen({onComplete,onSkip}){
+const[currentQuestion,setCurrentQuestion]=useState(0);
+const[score,setScore]=useState(0);
+const[selected,setSelected]=useState(null);
+const[showFeedback,setShowFeedback]=useState(false);
+const questions=[{question:'Cual es el objetivo principal de la nueva estrategia SSO de Codelco?',options:['Reducir costos operativos','Alcanzar Cero incidentes con consecuencias graves','Aumentar la produccion minera','Implementar nuevas tecnologias'],correct:1,feedback:{correct:'Correcto! El Objetivo Cero es la meta central.',incorrect:'Incorrecto. El objetivo es alcanzar Cero incidentes con consecuencias graves.'}},{question:'Cual NO es uno de los 4 pilares de la estrategia?',options:['Cultura de Seguridad','Gestion de Riesgos','Automatizacion Total','Bienestar Integral'],correct:2,feedback:{correct:'Muy bien! La automatizacion total no es uno de los pilares.',incorrect:'Incorrecto. Los 4 pilares son Cultura de Seguridad, Gestion de Riesgos, Excelencia Operacional y Bienestar Integral.'}},{question:'Que significa que la seguridad debe integrarse en cada proceso operativo?',options:['Que solo los supervisores deben preocuparse','Que la seguridad es parte de cada tarea, no algo separado','Que debemos hacer mas reuniones','Que debemos comprar mas equipos'],correct:1,feedback:{correct:'Exacto! La seguridad debe estar integrada en cada tarea.',incorrect:'Incorrecto. La integracion significa que la seguridad es parte de cada tarea.'}}];
+const handleAnswer=(index)=>{if(selected!==null)return;setSelected(index);setShowFeedback(true);if(index===questions[currentQuestion].correct)setScore(score+1);};
+const nextQuestion=()=>{if(currentQuestion<questions.length-1){setCurrentQuestion(currentQuestion+1);setSelected(null);setShowFeedback(false);}else{onComplete(score+(selected===questions[currentQuestion].correct?1:0),questions.length);}};
+const q=questions[currentQuestion];
+const progress=((currentQuestion+1)/questions.length)*100;
+return(
+<div className="screen">
+<div className="logo-container">
+<div className="logo-text">CODELCO</div>
+<div className="tagline">Evaluacion de Conocimientos</div>
+</div>
+<h2 className="hero-title">Pregunta {currentQuestion+1} de {questions.length}</h2>
+<div className="progress-bar"><div className="progress-fill" style={{width:progress+'%'}}></div></div>
+<div className="card">
+<h3 className="card-title">{q.question}</h3>
+<div className="quiz-options">
+{q.options.map((option,idx)=>(
+<button key={idx} className={'quiz-option '+(selected===idx?(idx===q.correct?'correct':'incorrect'):'')} onClick={()=>handleAnswer(idx)} disabled={selected!==null}>{option}</button>
+))}
+</div>
+{showFeedback&&<div className={'feedback '+(selected===q.correct?'correct':'incorrect')}>{selected===q.correct?q.feedback.correct:q.feedback.incorrect}</div>}
+{showFeedback&&<button className="btn btn-primary" onClick={nextQuestion} style={{marginTop:'16px'}}>{currentQuestion<questions.length-1?'Siguiente Pregunta':'Ver Resultados'}</button>}
+</div>
+<button className="btn btn-secondary" onClick={onSkip} style={{marginTop:'20px'}}>Saltar Evaluacion</button>
+</div>
+);
+}
+function DecisionTreeScreen({onComplete}){
+const[step,setStep]=useState(0);
+const[results,setResults]=useState([]);
+const decisions=[{question:'Un trabajador observa que un companero no esta usando su equipo de proteccion personal (EPP) en una zona de alto riesgo. Que debe hacer?',options:['Ignorarlo, no es mi responsabilidad','Acercarse y conversar respetuosamente sobre la importancia del EPP','Reportarlo inmediatamente al supervisor sin hablar con el companero','Tomar una foto y compartirla en redes sociales'],correct:1,result:{good:{title:'Decision Correcta',text:'Conversar con el companero demuestra cultura de seguridad y cuidado mutuo.'},bad:{title:'Decision que puede mejorar',text:'Ignorar la situacion pone en riesgo al companero y a todos.'}}},{question:'Estas realizando una tarea rutinaria que has hecho cientos de veces sin problemas. Que enfoque de seguridad debes mantener?',options:['Hacerla rapido ya que la conozco bien','Mantener la misma rutina de seguridad que el primer dia','Saltar algunos pasos del procedimiento para ser mas eficiente','Delegarla a un companero menos experimentado'],correct:1,result:{good:{title:'Excelente Mentalidad',text:'La familiaridad no debe generar confianza excesiva.'},bad:{title:'Atencion: Riesgo de Confianza Excesiva',text:'La rutina puede generar confianza excesiva y llevar a omitir pasos de seguridad.'}}},{question:'Identificas un riesgo critico en tu area de trabajo que podria causar un incidente grave. Cual es tu accion?',options:['Continuar trabajando con mas cuidado','Detener la actividad, informar inmediatamente y participar en la solucion','Esperar a la proxima reunion de seguridad para mencionarlo','Asumir que alguien mas ya lo reporto'],correct:1,result:{good:{title:'Actuacion Ejemplar',text:'Detener la actividad ante un riesgo critico es la decision correcta.'},bad:{title:'Necesitas actuar con mayor proactividad',text:'Ante un riesgo critico, la accion debe ser inmediata.'}}}];
+const handleDecision=(isCorrect)=>{setResults([...results,isCorrect]);if(step<decisions.length-1){setStep(step+1);}else{onComplete(results.filter(r=>r).length+(isCorrect?1:0),decisions.length);}};
+const d=decisions[step];
+const progress=((step+1)/decisions.length)*100;
+return(
+<div className="screen">
+<div className="logo-container">
+<div className="logo-text">CODELCO</div>
+<div className="tagline">Arbol de Decisiones</div>
+</div>
+<h2 className="hero-title">Toma de Decisiones en Seguridad</h2>
+<div className="progress-bar"><div className="progress-fill" style={{width:progress+'%'}}></div></div>
+<div className="decision-tree">
+<div className="decision-node">
+<div className="decision-question">{d.question}</div>
+<div className="decision-options">
+{d.options.map((option,idx)=>(
+<button key={idx} className="decision-btn" onClick={()=>handleDecision(idx===d.correct)}>{option}</button>
+))}
+</div>
+</div>
+</div>
+</div>
+);
+}
+function ResultsScreen({score,total,onRestart}){
+const percentage=Math.round((score/total)*100);
+let message,color;
+if(percentage>=80){message='Excelente! Demuestras un gran dominio de la estrategia SSO.';color='#2EB943';}
+else if(percentage>=50){message='Buen trabajo. Te recomendamos repasar los conceptos clave.';color='#FF6B00';}
+else{message='Sigue aprendiendo. Te invitamos a volver a ver el material.';color='#E63946';}
+return(
+<div className="screen">
+<div className="logo-container">
+<div className="logo-text">CODELCO</div>
+<div className="tagline">Resultados</div>
+</div>
+<h2 className="hero-title">Tu Puntaje</h2>
+<div className="score-display" style={{color:color}}>{score}/{total}</div>
+<p className="score-message">{message}</p>
+<div className="info-box">
+<h4>Recuerda</h4>
+<p>La seguridad es responsabilidad de todos. Cada decision que tomamos impacta no solo en nosotros, sino en nuestros companeros y familias. El Objetivo Cero es alcanzable cuando trabajamos unidos.</p>
+</div>
+<div className="info-box">
+<h4>Proximos Pasos</h4>
+<p>1. Participa en las capacitaciones SSO de tu division.<br/>2. Identifica y reporta condiciones inseguras.<br/>3. Lidera con el ejemplo en seguridad todos los dias.<br/>4. Visita el portal SSO de Codelco para mas recursos.</p>
+</div>
+<button className="btn btn-primary" onClick={onRestart} style={{marginTop:'20px'}}>Volver a Comenzar</button>
+</div>
+);
+}
+function App(){
+const[screen,setScreen]=useState('welcome');
+const[quizScore,setQuizScore]=useState({score:0,total:0});
+const[treeScore,setTreeScore]=useState({score:0,total:0});
+const handleQuizComplete=(s,t)=>{setQuizScore({score:s,total:t});setScreen('decisiontree');};
+const handleTreeComplete=(s,t)=>{setTreeScore({score:s,total:t});setScreen('results');};
+const handleRestart=()=>{setScreen('welcome');setQuizScore({score:0,total:0});setTreeScore({score:0,total:0});};
+const totalScore=quizScore.score+treeScore.score;
+const totalQuestions=quizScore.total+treeScore.total;
+return(
+<div>
+{screen==='welcome'&&<WelcomeScreen onStart={()=>setScreen('video')}/ >}
+{screen==='video'&&<VideoScreen onContinue={()=>setScreen('pillars')}/ >}
+{screen==='pillars'&&<PillarsScreen onContinue={()=>setScreen('quiz')}/ >}
+{screen==='quiz'&&<QuizScreen onComplete={handleQuizComplete} onSkip={()=>setScreen('decisiontree')}/ >}
+{screen==='decisiontree'&&<DecisionTreeScreen onComplete={handleTreeComplete}/ >}
+{screen==='results'&&<ResultsScreen score={totalScore} total={totalQuestions} onRestart={handleRestart}/ >}
+</div>
+);
+}
+const root=ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App/ >);
+</script>
 </body>
 </html>
