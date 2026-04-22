@@ -458,12 +458,12 @@
                   <h3 className="result-title">{node.result.title}</h3>
                   <p className="result-text">{node.result.message}</p>
                 </div>
-              
+              )}
                 <div className="decision-options">
                   {node.options.map((opt, i) => (
                     <button key={i} className="decision-btn" onClick={() => handleOptionClick(opt)}>{opt.text}</button>
                         )}
-                </div>
+                </div
               )}
             </div>
           </div>
